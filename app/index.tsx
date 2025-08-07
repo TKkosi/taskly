@@ -1,12 +1,30 @@
-import { StyleSheet, Text, View } from "react-native";
+import { theme } from "@/theme";
+import { StyleSheet, Text, View , TouchableOpacity , Alert} from "react-native";
 
-export default function Page() {
+export default function App() {
+  const handleDelete = () => {
+    Alert.alert(
+      "Are you sure you want to delete this ?",
+      "It will be gone for good ",
+      [
+        {
+          text :"Yes",
+          onPress: () => console.log("Deleted"),
+          style: "destructive",
+        },
+        {text : "Cancel", style: "cancel"}
+      ],
+    );
+  };
+
+
   return (
     <View style={styles.container}>
-      <View style={styles.main}>
-        <Text style={styles.title}>Hello World</Text>
-        <Text style={styles.subtitle}>This is the first page of your app.</Text>
-        <Text style={styles.body}>Welcome to Taskly, your personal task manager.</Text>
+      <View style={styles.itemContainer}>
+      <Text style={styles.itemText}>Coffee</Text>
+      <TouchableOpacity onPress={handleDelete} style={styles.button} activeOpacity={0.8}>
+        <Text style={styles.buttonText}>Delete</Text>
+      </TouchableOpacity>
       </View>
     </View>
   );
@@ -15,26 +33,32 @@ export default function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    padding: 24,
-  },
-  main: {
-    flex: 1,
+    backgroundColor: "#fff",
     justifyContent: "center",
-    maxWidth: 960,
-    marginHorizontal: "auto",
   },
-  title: {
-    fontSize: 64,
+  itemContainer: {
+    borderBottomWidth: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 16,
+    borderBottomColor: "#1a759f",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  itemText: {
+    fontSize: 18,
+    fontWeight: "200",
+    color: "#333",
+  },
+  button :{
+    backgroundColor: theme.colorBlack,
+    padding: 8,
+    borderRadius: 6,
+  },
+  buttonText: {
+    color: "#fff",
     fontWeight: "bold",
-  },
-  subtitle: {
-    fontSize: 36,
-    color: "#38434D",
-  },
-  body: {
-    fontSize: 24,
-    color: "#6C757D",
-    marginTop: 16,
+    textTransform: "uppercase",
+    letterSpacing: 1,
   },
 });
