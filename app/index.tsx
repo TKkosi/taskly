@@ -6,25 +6,66 @@ import { useState } from "react";
 type ShoppingListItemProps = {
   id:string;
   name: string;
+  completedAtTimestamp?: number;
 };
 
-const initialList: ShoppingListItemProps[] = [
-  { id: "1", name: "Coffee" },
-  { id: "2", name: "Tea" },
-  { id: "3", name: "Milk" },
-];
 
 export default function App() {
-  const [shoppingList] = useState(initialList);
-  const [value, setValue] = useState<string>();
+  const [shoppingList , setShoppingList] = useState<ShoppingListItemProps[]>([]);
+  const [value, setValue] = useState("");
 
   const handleSubmit = () => {
-    // Add your submit logic here, e.g., add item to shoppingList
-    setValue(""); // Clear input after submit
+    if (value) {
+      const newShoppingList = [
+        { id: new Date().toTimeString() , name: value },
+        ...shoppingList,
+      ];
+      setShoppingList(newShoppingList);
+      setValue(""); 
+    }
+  };
+
+  const handleToggleComplete = (id: string) => {
+    const newShoppingList = shoppingList.map(item => {
+      if (item.id === id) {
+        return {
+          ...item,
+          completedAtTimestamp: item.completedAtTimestamp ? undefined : Date.now(),
+        };
+      }
+      return item;
+    });
+    setShoppingList(newShoppingList);
+  };
+
+  const handleDelete = (id: string) => {
+    const newShoppingList = shoppingList.filter(item => item.id !== id);
+    setShoppingList(newShoppingList);
   };
 
   return (
-    <FlatList ListHeaderComponent={<TextInput placeholder="Add item" value={value} onChangeText={setValue} style={styles.textInput} returnKeyType="done" onSubmitEditing={handleSubmit}/>}  data={shoppingList} renderItem={({ item }) => <ShoppingListItem key={item.id} name={item.name} isCompleted={false} />} />
+    <FlatList 
+      data={shoppingList}
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+      stickyHeaderIndices={[0]} 
+      ListEmptyComponent={
+        <View style={styles.listEmptyContainer}>
+        <Text>Your shopping list is empty</Text>
+      </View>
+    }  
+    ListHeaderComponent={
+      <TextInput 
+      placeholder="Add item" 
+      style={styles.textInput} 
+      value={value} 
+      onChangeText={setValue} 
+      returnKeyType="done" 
+      onSubmitEditing={handleSubmit}
+      />}  
+      renderItem={({ item }) => <ShoppingListItem name={item.name} onDelete={() => handleDelete(item.id)} onToggleComplete={() => handleToggleComplete(item.id)} isCompleted={Boolean(item.completedAtTimestamp)} />} 
+      ></FlatList>
+      
   );
 }
 
@@ -32,7 +73,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: 12,
+    padding: 12,
+  },
+  contentContainer: {
+    paddingBottom:24,
   },
   textInput: {
     borderColor: theme.colorCerulean,
@@ -44,9 +88,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     backgroundColor: theme.colorWhite
   },
-  contentContainer: {
-    borderColor: theme.colorLightGrey,
-    borderWidth: 2,
-    paddingBottom:24,
+  listEmptyContainer: {
+    marginVertical: 18,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
