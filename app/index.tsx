@@ -1,9 +1,12 @@
 import { ShoppingListItem } from "@/components/ShoppingListItem";
 import { StyleSheet, FlatList , TextInput , View , Text } from "react-native";
 import { theme } from "@/theme";
-import { useState } from "react";
+import { useState , useEffect } from "react";
+import { getFromStorage , saveToStorage} from "@/utils/storage";
 
-type ShoppingListItemProps = {
+const storageKey = "shoppingList";
+
+type ShoppingListItemType = {
   id:string;
   name: string;
   completedAtTimestamp?: number;
@@ -12,8 +15,18 @@ type ShoppingListItemProps = {
 
 
 export default function App() {
-  const [shoppingList , setShoppingList] = useState<ShoppingListItemProps[]>([]);
+  const [shoppingList , setShoppingList] = useState<ShoppingListItemType[]>([]);
   const [value, setValue] = useState("");
+
+  useEffect(() => {
+    const fetchInitial = async () => {
+      const data = await getFromStorage(storageKey);
+      if (data) {
+        setShoppingList(data);
+      }
+    };
+    fetchInitial();
+  }, []);
 
   const handleSubmit = () => {
     if (value) {
@@ -22,7 +35,8 @@ export default function App() {
         ...shoppingList,
       ];
       setShoppingList(newShoppingList);
-      setValue(""); 
+      saveToStorage(storageKey, newShoppingList);
+      setValue(undefined); 
     }
   };
 
@@ -32,22 +46,25 @@ export default function App() {
         return {
           ...item,
           completedAtTimestamp: item.completedAtTimestamp ? undefined : Date.now(),
+          lastUpdatedAtTimestamp: Date.now(),
         };
       } else {
         return item;
       }
     });
+    saveToStorage(storageKey, newShoppingList);
     setShoppingList(newShoppingList);
   };
 
   const handleDelete = (id: string) => {
     const newShoppingList = shoppingList.filter(item => item.id !== id);
+    saveToStorage(storageKey, newShoppingList);
     setShoppingList(newShoppingList);
   };
 
   return (
     <FlatList 
-      data={shoppingList}
+      data={orderShoppingList(shoppingList)}
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
       stickyHeaderIndices={[0]} 
@@ -70,12 +87,33 @@ export default function App() {
       
   );
 }
+function orderShoppingList(shoppingList: ShoppingListItemType[]) {
+  return shoppingList.sort((item1, item2) => {
+    if (item1.completedAtTimestamp && item2.completedAtTimestamp) {
+      return item2.completedAtTimestamp - item1.completedAtTimestamp;
+    }
+
+    if (item1.completedAtTimestamp && !item2.completedAtTimestamp) {
+      return 1;
+    }
+
+    if (!item1.completedAtTimestamp && item2.completedAtTimestamp) {
+      return -1;
+    }
+
+    if (!item1.completedAtTimestamp && !item2.completedAtTimestamp) {
+      return item2.lastUpdatedAtTimestamp - item1.lastUpdatedAtTimestamp;
+    }
+
+    return 0;
+  });
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    padding: 12,
+    paddingVertical: 12,
   },
   contentContainer: {
     paddingBottom:24,
@@ -83,7 +121,7 @@ const styles = StyleSheet.create({
   textInput: {
     borderColor: theme.colorCerulean,
     borderWidth: 2,
-    padding: 10,
+    padding: 12,
     fontSize: 18,
     borderRadius:50,
     marginHorizontal:12,
