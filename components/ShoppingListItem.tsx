@@ -57,7 +57,6 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 18,
     fontWeight: "200",
-    marginLeft: 8,
     flex: 1,
   },
     completedContainer: {
@@ -74,7 +73,7 @@ const styles = StyleSheet.create({
     },
     row: {
         flexDirection: "row",
-        alignItems: "center",
         flex: 1,
+        gap: 8,
     },
 });
