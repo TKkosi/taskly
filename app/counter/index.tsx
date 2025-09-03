@@ -111,4 +111,20 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 1,
   },
+  row:{
+    flexDirection:"row",
+    marginBottom:24,
+  },
+  heading:{
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 24,
+    color: theme.colorBlack,
+  },
+  containerLate:{
+    backgroundColor: theme.colorRed,
+  },
+  whiteText:{
+    color: theme.colorWhite,
+  }
 });
