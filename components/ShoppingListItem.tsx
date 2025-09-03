@@ -1,6 +1,7 @@
 import { TouchableOpacity, View, Alert, StyleSheet, Text , Pressable } from "react-native";
 import { AntDesign , Entypo } from "@expo/vector-icons";
 import { theme } from "../theme";
+import * as Haptics from "expo-haptics";
 
 type Props = {
   name: string;
@@ -11,6 +12,7 @@ type Props = {
 
 export function ShoppingListItem({ name, isCompleted, onDelete, onToggleComplete }: Props) {
   const handleDelete = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     Alert.alert(
       `Are you sure you want to delete ${name}?`,
       "It will be gone for good",
