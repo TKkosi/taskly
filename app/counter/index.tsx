@@ -25,7 +25,7 @@ type CountdownStatus = {
 
 export default function CounterScreen() {
   const [isLoading, setIsLoading] = useState(true);
-  const confettiRef = useRef<any>();
+  const confettiRef = useRef<any>(undefined);
   const [countdownState , setCountdownState] = useState<PersistedCountdownState>();
   const [status, setStatus] = useState<CountdownStatus>({
     isOverdue: false,
