@@ -1,9 +1,20 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Dimensions } from "react-native";
+import React, { useRef } from "react";
+import ConfettiCannon from "react-native-confetti-cannon";
 
 export default function IdeaScreen() {
+  const confettiRef = useRef<any>(null);
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Idea</Text>
+      <ConfettiCannon
+        ref={confettiRef}
+        count={50}
+        origin={{ x: Dimensions.get("window").width / 2, y: -30 }}
+        autoStart={false}
+        fadeOut={true}
+      />  
     </View>
   );
 }
