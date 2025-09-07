@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, Dimensions } from "react-native";
+import { Text, View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import React, { useRef } from "react";
 import ConfettiCannon from "react-native-confetti-cannon";
 
@@ -15,6 +15,10 @@ export default function IdeaScreen() {
         autoStart={false}
         fadeOut={true}
       />  
+      <TouchableOpacity onPress={() => confettiRef.current?.start()} style={styles.button}>
+        <Text style={styles.buttonText}>Celebrate Idea!</Text>
+      </TouchableOpacity>
+
     </View>
   );
 }
